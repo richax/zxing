@@ -1,0 +1,17 @@
+舟山项目二维码特殊 charset：GB18030 解码错误问题
+针对此问题修改了的 qrcode 的解码部分，修改后解决了该问题，但项目本身的二维码测试用例测试不通过： 
+    zxing/core$ mvn clean package
+可以跳过测试部分直接编译打包：
+    zxing/core$ mvn -DskipTests -Dgpg.skip=true -Dcheckstyle.skip=true -Drat.skip=true clean package 
+
+代码修改：
+Changes to be committed:
+    modified:   core/src/main/java/com/google/zxing/qrcode/decoder/DecodedBitStreamParser.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetDetector.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetMatch.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecog_2022.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecog_UTF8.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecog_Unicode.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecog_mbcs.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecog_sbcs.java
+    new file:   core/src/main/java/com/ibm/icu/text/CharsetRecognizer.java

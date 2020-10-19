@@ -22,6 +22,8 @@ import com.google.zxing.common.BitSource;
 import com.google.zxing.common.CharacterSetECI;
 import com.google.zxing.common.DecoderResult;
 import com.google.zxing.common.StringUtils;
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -242,12 +244,31 @@ final class DecodedBitStreamParser {
     } else {
       encoding = currentCharacterSetECI.name();
     }
+
+    String resolvedString = resolveBytes(readBytes);
     try {
-      result.append(new String(readBytes, encoding));
+      if (resolvedString == null || resolvedString.length() == 0) {
+        resolvedString = new String(readBytes, encoding);
+      }
+      result.append(resolvedString);
     } catch (UnsupportedEncodingException ignored) {
       throw FormatException.getFormatInstance();
     }
     byteSegments.add(readBytes);
+  }
+
+  private static String resolveBytes(byte[] readBytes) {
+    try {
+      CharsetDetector detector = new CharsetDetector();
+      detector.setText(readBytes);
+      CharsetMatch match = detector.detect();
+      if (match != null) {
+        return match.getString();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "";
   }
 
   private static char toAlphaNumericChar(int value) throws FormatException {
